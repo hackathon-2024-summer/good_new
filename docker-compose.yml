@@ -1,0 +1,75 @@
+services:
+  fastapi:
+    build:
+      context: ./apis
+      args:
+        - MY_UID=${MY_UID}
+        - MY_GID=${MY_GID}
+        - PORT_FAST=${PORT_FAST}
+        - TEST_MODE=${TEST_MODE}
+    volumes:
+      - ..:/home/appuser
+      - .:/home/appuser/back
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/home/appuser/back/apis
+    networks:
+      - hackathon_summer_network
+    ports:
+      - ${PORT_FAST}:${PORT_FAST}
+    # expose:
+    #   - ${PORT_FAST}
+    command: ["/bin/sh", "-c", "/home/appuser/back/build.sh"]
+  
+  ngrok:
+    image: wernight/ngrok
+    ports:
+      - ${PORT_NGROK}:${PORT_NGROK}
+    environment:
+      - NGROK_AUTH=${NGROK_AUTH_TOKEN}
+      - NGROK_PROTOCOL=http
+      - NGROK_PORT=fastapi:${PORT_FAST}
+    networks:
+      - hackathon_summer_network
+    depends_on:
+      - fastapi    
+  # mysql_fast:
+  #   build:
+  #     context: ./mysql
+  #     args:
+  #       - PORT_MYSQL_FAST=${PORT_MYSQL_FAST}
+  #       - MYSQL_USER=${MYSQL_USER}
+  #   volumes:
+  #     - ./mysql/data/db:/var/lib/mysql/${MYSQL_DB_FAST}
+  #   environment:
+  #     - TZ=Asia/Tokyo
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - hackathon_summer_network
+  #   ports:
+  #     - ${PORT_MYSQL_FAST}:${PORT_MYSQL_FAST}
+
+  # pma_fast:
+  #   build:
+  #     context: ./phpmyadmin
+  #     args:
+  #       PORT_PMA_FAST: ${PORT_PMA_FAST}
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - hackathon_summer_network
+  #   environment:
+  #     PMA_HOST: ${MYSQL_HOST_FAST}
+  #     PMA_PORT: ${PORT_MYSQL_FAST}
+  #   # expose:
+  #   #   - ${PORT_PMA_FAST}
+  #   ports:
+  #     - ${PORT_PMA_FAST}:${PORT_PMA_FAST}
+  #   volumes:
+  #     - ./phpmyadmin/sessions:/sessions      
+
+networks:
+  hackathon_summer_network:
+    name: hackathon_summer_network

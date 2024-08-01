@@ -1,0 +1,17 @@
+fastapi
+sqlalchemy
+pymysql
+alembic
+uvicorn
+passlib
+databases
+aiomysql
+python-jose
+pydantic[email]
+pytest
+httpx
+aiosqlite
+sqlalchemy[asyncio]
+pytest-asyncio
+pytest-cov
+slack-bolt

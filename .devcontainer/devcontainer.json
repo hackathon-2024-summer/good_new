@@ -1,0 +1,24 @@
+{
+  "name": "hackathon_2024_summer_back",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "fastapi",
+  "workspaceFolder": "/home/appuser/back",
+  "shutdownAction": "stopCompose",
+  "remoteUser": "appuser",
+  "updateRemoteUserUID": true,
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": [
+        "ms-python.python",
+        "mhutchie.git-graph",
+        "ms-python.black-formatter",
+        "ritwickdey.LiveServer",
+        "GitHub.vscode-pull-request-github"
+      ]
+    }
+  }
+  // "postCreateCommand": "sh -c 'curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh -s -- --unattended && echo \"source $HOME/.oh-my-zsh/oh-my-zsh.sh\" >> ~/.zshrc'",
+}
