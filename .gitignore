@@ -6,3 +6,4 @@ README
 alembic.ini
 __pycache__
 .coverage
+.mypy_cache
