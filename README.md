@@ -52,7 +52,8 @@ Slack AppとはSlack ワークスペースで実行するアプリケーショ�
 18. 左サイドバーから「Basic Information」を選択し、「Signing Secret」項目の「Show」を押下し表示させたのち、内容をコピーし、メモしておく
 19. .envのSLACK_BOT_TOKENに17、SLACK_SIGNING_SECRETに18のトークンを設定する。
 20. 左サイドバーから「Event Subscriptions」を選択
-21. Enable Events」を「On」にし、「Request URL」にngrokで公開したバックエンドのURLを指定
+21. Enable Events」を「On」にし、「Request URL」にngrokで公開したバックエンドのURL(イベントハンドラを指す)を指定
+    <https://hoge-222-229-40-231.ngrok-free.app/slack/events>
 22. 下部の「Subscribe to bot events」タブ内で以下3つのイベントを追加
     - message.channels
     - message.groups

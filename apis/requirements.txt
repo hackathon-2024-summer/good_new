@@ -15,3 +15,5 @@ sqlalchemy[asyncio]
 pytest-asyncio
 pytest-cov
 slack-bolt
+slack_sdk
+apscheduler
