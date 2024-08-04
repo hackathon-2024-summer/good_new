@@ -1,3 +1,5 @@
+# developは、DB接続等の動作確認のためのエンドポイントをまとめています（本番環境では不要です）
+
 from datetime import date
 from pydantic import BaseModel, Field, ConfigDict
 

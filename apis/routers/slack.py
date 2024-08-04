@@ -1,6 +1,6 @@
 import os
 from typing import Annotated
-from fastapi import APIRouter, status, Depends, Request
+from fastapi import APIRouter, Depends, Request
 from slack_bolt import App
 from slack_bolt.adapter.fastapi import SlackRequestHandler
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,26 +23,8 @@ slack_app = App(
 )
 handler = SlackRequestHandler(slack_app)
 
-
-# @slack_app.event("message")
-# def handle_message_events(body, say):
-#     message = body["event"]
-#     say(message["text"]+" ですぞえ")
-
-@slack_app.event("message")
-def handle_message_events(body, say, logger):
-    logger.debug(f"Received event: {body}")
-    event = body["event"]
-    channel_type = event.get("channel_type")
-    logger.info(f"Message received in channel type: {channel_type}")
-    
-    if channel_type == "im":
-        logger.info("Responding to DM")
-        say(event["text"] + " だがや")
-    else:
-        logger.info("Responding to channel message")
-        say(event["text"] + " ですぞえ")
-
+# slack_appを定義した後でslack_eventsをインポートする
+from slack_events import parrot_bot
 
 @router.post("/slack/events")
 async def slack_events(req: Request):
