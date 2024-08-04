@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request
 from slack_bolt import App
 from slack_bolt.adapter.fastapi import SlackRequestHandler
 from slack_sdk import WebClient
@@ -7,7 +7,6 @@ from slack_sdk.errors import SlackApiError
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from contextlib import asynccontextmanager
-from slack_sdk.signature import SignatureVerifier
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
@@ -22,11 +21,9 @@ client = WebClient(token=os.environ.get("SLACK_BOT_TOKEN"))
 slack_app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET"),
-    # process_before_response=True,
-    # request_verification_enabled=False,
-    # ignoring_self_events_enabled=False  # self eventsの無視を無効にする
 )
 handler = SlackRequestHandler(slack_app)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -71,6 +68,7 @@ def scheduled_task():
     # 特定のユーザーにDMを送信
     send_dm_to_user("U07E21NGPA7", "定期的なDMだがや")
 
+
 @slack_app.event("message")
 def handle_message_events(body, say, logger):
     logger.debug(f"Received event: {body}")
@@ -85,11 +83,12 @@ def handle_message_events(body, say, logger):
         logger.info("Responding to channel message")
         say(event["text"] + " ですぞえ")
 
+
 @app.post("/slack/events")
 async def slack_events(req: Request):
     return await handler.handle(req)
 
+
 @app.get("/")
 def read_root():
     return {"Hello": "Scheduled Slack Bot World"}
-
