@@ -4,7 +4,6 @@ pymysql
 alembic
 uvicorn
 passlib
-databases
 aiomysql
 python-jose
 pydantic[email]
