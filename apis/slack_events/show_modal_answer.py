@@ -30,7 +30,7 @@ async def show_modal_answer(ack, body, client):
                 "type": "section",
                 "text": {
                     "type": "plain_text",
-                    "text": ":wave: こんにちは！\n\nあなたの、24時間以内に起きた「よかったこと」や「新しい発見」を教えて下さい :star2: ",
+                    "text": "こんにちは！ :wave:\n\nあなたの、24時間以内に起きた「よかったこと」や「新しい発見」を教えて下さい :star2: ",
                     "emoji": True
                     }
                 },
