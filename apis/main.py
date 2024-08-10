@@ -7,10 +7,9 @@ import random
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.background import BackgroundScheduler
 
-app = FastAPI()
+# from slack_events import show_modal_answer
 
-app.include_router(slack.router)
-app.include_router(develop.router)
+# app = FastAPI()
 
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN")
 SLACK_SIGNING_SECRET = os.environ.get("SLACK_SIGNING_SECRET")
@@ -32,6 +31,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+app.include_router(slack.router)
+app.include_router(develop.router)
 
 
 # Slack APIから全ユーザーを取得し、Botと削除済みユーザーを除外して返す
@@ -85,11 +86,24 @@ def send_question_to_user(user):
     url = "https://slack.com/api/chat.postMessage"
     headers = {"Authorization": f"Bearer {SLACK_BOT_TOKEN}"}
     payload = {
-        "channel": user[
-            "id"
-        ],  # channelの値としてユーザーIDを渡すと、そのユーザーのApp Homeチャンネルに投稿する
-        "text": "こんにちは！ :wave:\n\nあなたの、24時間以内に起きた「よかったこと」や「新しい発見」を教えて下さい :star2: ",
-        "emoji": "true",
+        # channelの値としてユーザーIDを渡すと、そのユーザーのApp Homeチャンネルに投稿する
+        "channel": user["id"],
+        # Block Kit Builderで作ったものを貼り付け
+        "blocks": [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "こんにちは！ :wave:\n\nあなたの、24時間以内に起きた「よかったこと」や「新しい発見」を教えて下さい :star2:",
+                },
+                "accessory": {
+                    "type": "button",
+                    "text": {"type": "plain_text", "text": "回答する"},
+                    "value": "click_me_123",
+                    "action_id": "click_button_answer",
+                },
+            }
+        ],
     }
 
     response = requests.post(url, json=payload, headers=headers)
@@ -97,7 +111,7 @@ def send_question_to_user(user):
     # JSONレスポンスの取得とエラーチェック
     response_data = response.json()
     if not response_data.get("ok"):
-        logger.error(f"Slack API error: {response.get('error')}")
+        logger.error(f"Slack API error: {response_data.get('error')}")
         return "質問の送信に失敗しました"
     else:
         logger.info(f"質問を{user['name']}に送信しました")
