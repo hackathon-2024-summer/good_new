@@ -22,7 +22,7 @@ SLACK_SIGNING_SECRET = os.environ.get("SLACK_SIGNING_SECRET")
 async def lifespan(app: FastAPI):
     global scheduler
     scheduler = BackgroundScheduler()
-    scheduler.add_job(question, "cron", hour=9, minute=25)
+    scheduler.add_job(question, "cron", hour=14, minute=0)
     scheduler.start()
     logger.info("Scheduler started")
 
