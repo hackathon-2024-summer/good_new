@@ -6,6 +6,9 @@ import os
 import random
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.background import BackgroundScheduler
+import datetime
+import jpholiday
+
 
 # from slack_events import show_modal_answer
 
@@ -19,7 +22,7 @@ SLACK_SIGNING_SECRET = os.environ.get("SLACK_SIGNING_SECRET")
 async def lifespan(app: FastAPI):
     global scheduler
     scheduler = BackgroundScheduler()
-    scheduler.add_job(question, "cron", hour=14, minute=0)
+    scheduler.add_job(question, "cron", hour=9, minute=25)
     scheduler.start()
     logger.info("Scheduler started")
 
@@ -119,18 +122,14 @@ def send_question_to_user(user):
 
 # Good and New Botから質問を送信する関数
 def question():
-    users = get_random_users()
-    if not users:
-        logger.error("ユーザーが見つかりませんでした")
+    today = datetime.date.today()
+    weekday = today.weekday()  # 0(月曜日)から6(日曜日)が取得できる
+
+    if weekday >= 5 or jpholiday.is_holiday(today):
+        logger.warning("土日祝日のため、質問を送信しません")
         return
 
-    for user in users:
-        send_question_to_user(user)
-
-
-# スケジュールされたタスク(send_question_to_user)
-def scheduled_question():
-    users = get_slack_users()
+    users = get_random_users()
     if not users:
         logger.error("ユーザーが見つかりませんでした")
         return
