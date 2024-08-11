@@ -16,4 +16,6 @@ pytest-cov
 slack-bolt
 slack_sdk
 apscheduler
+requests
+jpholiday
 aiohttp
