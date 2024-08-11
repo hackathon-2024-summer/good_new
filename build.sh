@@ -48,7 +48,7 @@ chown appuser:appgroup alembic.ini
 
 # コンテナ新規起動時にデータを挿入したい場合、insert_db.pyを作ってここで実行。
 # 接続URL・SQL文・接続インスタンスを作り、execute(text(sql文))を実行する。
-# python insert_db.py
+python ../insert_db.py
 
 uvicorn main:app --reload --host 0.0.0.0 --port ${PORT_FAST} --log-level info
 #--log-levelはproductionでは不要
