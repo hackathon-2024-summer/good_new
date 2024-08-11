@@ -15,8 +15,7 @@ DbDependency = Annotated[AsyncSession, Depends(get_db)]
 
 @router.get("/")
 def read_root():
-    return {"Hello": "ngrok World"}
-
+    return {"Hello": "Slack App Backend!"}
 
 # contentsを登録する
 @router.post(

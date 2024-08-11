@@ -1,12 +1,10 @@
-import logging
-from routers.slack import slack_app
-
-logger = logging.getLogger(__name__)
+from routers.slack import slack_app, logger
 
 
 # オウム返しBOT
+# DMへのメッセージに対してはGood&Newを尋ねるように変更（テスト用）
 @slack_app.event("message")
-def handle_message_events(body, say, logger):
+async def handle_message_events(body, say, logger):
     logger.debug(f"Received event: {body}")
     event = body["event"]
     channel_type = event.get("channel_type")
@@ -14,7 +12,20 @@ def handle_message_events(body, say, logger):
     
     if channel_type == "im":
         logger.info("Responding to DM")
-        say(event["text"] + " だがや")
+        await say(
+            blocks=[
+            {
+                "type": "section",
+                "text": {"type": "mrkdwn", "text": "あなたのGood & Newな事を教えて下さい :eyes:"},
+                "accessory": {
+                    "type": "button",
+                    "text": {"type": "plain_text", "text":"回答する"},
+                    "action_id": "click_button_answer"
+                }
+            }
+        ],
+        text="あなたのGood & Newな事を教えて下さい :eyes:"
+        )
     else:
         logger.info("Responding to channel message")
-        say(event["text"] + " ですぞえ")
+        await say(event["text"] + " ですぞえ")
