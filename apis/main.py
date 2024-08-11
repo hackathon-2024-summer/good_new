@@ -6,8 +6,12 @@ import os
 import random
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+import asyncio
 import datetime
 import jpholiday
+import aiohttp
 
 
 # from slack_events import show_modal_answer
@@ -17,12 +21,17 @@ import jpholiday
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN")
 SLACK_SIGNING_SECRET = os.environ.get("SLACK_SIGNING_SECRET")
 
+# executors = {"default": ThreadPoolExecutor(20), "processpool": ProcessPoolExecutor(5)} # 非同期処理の時はThreadPoolExecutorを選択するとエラー
+job_defaults = {"coalesce": False, "max_instances": 3, "misfire_grace_time": 3600}
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global scheduler
-    scheduler = BackgroundScheduler()
+    # 非同期処理のためBackgroundSchedulerから変更
+    scheduler = AsyncIOScheduler(job_defaults=job_defaults)
     scheduler.add_job(question, "cron", hour=14, minute=0)
+    # scheduler.add_job(question, "interval", minutes=1)
     scheduler.start()
     logger.info("Scheduler started")
 
@@ -38,17 +47,24 @@ app.include_router(slack.router)
 app.include_router(develop.router)
 
 
+# 非同期関数実行のための動機関数
+def run_question_job():
+    asyncio.run(question())
+
+
 # Slack APIから全ユーザーを取得し、Botと削除済みユーザーを除外して返す
 @app.get("/users")
-def get_slack_users():
+async def get_slack_users():
     url = "https://slack.com/api/users.list"
     headers = {"Authorization": f"Bearer {SLACK_BOT_TOKEN}"}
-    response = requests.get(url, headers=headers)
 
-    if response.status_code != 200:
-        return "Slack usersの取得に失敗しました"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, headers=headers) as response:
+            if response.status != 200:
+                logger.error("Slack usersの取得に失敗しました")
+                return []
 
-    data = response.json()
+            data = await response.json()
 
     # APIレスポンス全体を出力
     logger.debug(f"Slack API response: {data}")
@@ -68,8 +84,8 @@ def get_slack_users():
 
 
 # get_slack_usersを利用して、ランダムに5人のユーザーを取得する
-def get_random_users():
-    real_users = get_slack_users()
+async def get_random_users():
+    real_users = await get_slack_users()
 
     # 十分なユーザー情報が含まれているか確認
     if len(real_users) < 5:
@@ -85,7 +101,7 @@ def get_random_users():
 
 
 # Slack APIからユーザーに質問を送信する関数
-def send_question_to_user(user):
+async def send_question_to_user(user):
     url = "https://slack.com/api/chat.postMessage"
     headers = {"Authorization": f"Bearer {SLACK_BOT_TOKEN}"}
     payload = {
@@ -109,10 +125,11 @@ def send_question_to_user(user):
         ],
     }
 
-    response = requests.post(url, json=payload, headers=headers)
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, json=payload, headers=headers) as response:
+            response_data = await response.json()
 
     # JSONレスポンスの取得とエラーチェック
-    response_data = response.json()
     if not response_data.get("ok"):
         logger.error(f"Slack API error: {response_data.get('error')}")
         return "質問の送信に失敗しました"
@@ -121,7 +138,7 @@ def send_question_to_user(user):
 
 
 # Good and New Botから質問を送信する関数
-def question():
+async def question():
     today = datetime.date.today()
     weekday = today.weekday()  # 0(月曜日)から6(日曜日)が取得できる
 
@@ -129,13 +146,13 @@ def question():
         logger.warning("土日祝日のため、質問を送信しません")
         return
 
-    users = get_random_users()
+    users = await get_random_users()
     if not users:
         logger.error("ユーザーが見つかりませんでした")
         return
 
     for user in users:
-        send_question_to_user(user)
+        await send_question_to_user(user)
 
 
 # ロギングの設定

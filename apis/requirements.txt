@@ -18,3 +18,4 @@ slack_sdk
 apscheduler
 requests
 jpholiday
+aiohttp
