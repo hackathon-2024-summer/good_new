@@ -1,14 +1,14 @@
 from fastapi import FastAPI
 from routers import slack, develop
 import logging
-import requests
+# import requests
 import os
 import random
 from contextlib import asynccontextmanager
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
+# from apscheduler.schedulers.background import BackgroundScheduler
+# from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-import asyncio
+# import asyncio
 import datetime
 import jpholiday
 import aiohttp
@@ -30,7 +30,7 @@ async def lifespan(app: FastAPI):
     global scheduler
     # 非同期処理のためBackgroundSchedulerから変更
     scheduler = AsyncIOScheduler(job_defaults=job_defaults)
-    scheduler.add_job(question, "cron", hour=14, minute=0)
+    scheduler.add_job(question, "cron", hour=16, minute=8)
     # scheduler.add_job(question, "interval", minutes=1)
     scheduler.start()
     logger.info("Scheduler started")
@@ -47,13 +47,13 @@ app.include_router(slack.router)
 app.include_router(develop.router)
 
 
-# 非同期関数実行のための動機関数
-def run_question_job():
-    asyncio.run(question())
+# # 非同期関数実行のための動機関数
+# def run_question_job():
+#     asyncio.run(question())
 
 
 # Slack APIから全ユーザーを取得し、Botと削除済みユーザーを除外して返す
-@app.get("/users")
+# @app.get("/users")
 async def get_slack_users():
     url = "https://slack.com/api/users.list"
     headers = {"Authorization": f"Bearer {SLACK_BOT_TOKEN}"}
@@ -142,9 +142,9 @@ async def question():
     today = datetime.date.today()
     weekday = today.weekday()  # 0(月曜日)から6(日曜日)が取得できる
 
-    if weekday >= 5 or jpholiday.is_holiday(today):
-        logger.warning("土日祝日のため、質問を送信しません")
-        return
+    # if weekday >= 5 or jpholiday.is_holiday(today):
+    #     logger.warning("土日祝日のため、質問を送信しません")
+    #     return
 
     users = await get_random_users()
     if not users:
