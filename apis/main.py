@@ -18,7 +18,7 @@ async def lifespan(app: FastAPI):
     global scheduler
     # 非同期処理のためBackgroundSchedulerから変更
     scheduler = AsyncIOScheduler(job_defaults=job_defaults)
-    scheduler.add_job(question, "cron", hour=17, minute=0)
+    scheduler.add_job(question, "cron", hour=14, minute=0)
     # scheduler.add_job(question, "interval", minutes=1)
     scheduler.start()
     logger.info("Scheduler started")
