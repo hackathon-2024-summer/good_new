@@ -1,31 +1,12 @@
 import random
-import os
 import datetime
 import jpholiday
-import aiohttp
 from routers.slack import slack_app, logger
-
-SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN")
-SLACK_SIGNING_SECRET = os.environ.get("SLACK_SIGNING_SECRET")
-
-# # 非同期関数実行のための動機関数
-# def run_question_job():
-#     asyncio.run(question())
 
 
 # Slack APIから全ユーザーを取得し、Botと削除済みユーザーを除外して返す
-# @app.get("/users")
 async def get_slack_users():
-    url = "https://slack.com/api/users.list"
-    headers = {"Authorization": f"Bearer {SLACK_BOT_TOKEN}"}
-
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url, headers=headers) as response:
-            if response.status != 200:
-                logger.error("Slack usersの取得に失敗しました")
-                return []
-
-            data = await response.json()
+    data = await slack_app.client.users_list()
 
     # APIレスポンス全体を出力
     logger.debug(f"Slack API response: {data}")
@@ -63,13 +44,7 @@ async def get_random_users():
 
 # Slack APIからユーザーに質問を送信する関数
 async def send_question_to_user(user):
-    url = "https://slack.com/api/chat.postMessage"
-    headers = {"Authorization": f"Bearer {SLACK_BOT_TOKEN}"}
-    payload = {
-        # channelの値としてユーザーIDを渡すと、そのユーザーのApp Homeチャンネルに投稿する
-        "channel": user["id"],
-        # Block Kit Builderで作ったものを貼り付け
-        "blocks": [
+    msg_block = [
             {
                 "type": "section",
                 "text": {
@@ -83,12 +58,9 @@ async def send_question_to_user(user):
                     "action_id": "click_button_answer",
                 },
             }
-        ],
-    }
+        ]
 
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url, json=payload, headers=headers) as response:
-            response_data = await response.json()
+    response_data = await slack_app.client.chat_postMessage(channel=user["id"], blocks=msg_block)
 
     # JSONレスポンスの取得とエラーチェック
     if not response_data.get("ok"):
@@ -103,9 +75,9 @@ async def question():
     today = datetime.date.today()
     weekday = today.weekday()  # 0(月曜日)から6(日曜日)が取得できる
 
-    # if weekday >= 5 or jpholiday.is_holiday(today):
-    #     logger.warning("土日祝日のため、質問を送信しません")
-    #     return
+    if weekday >= 5 or jpholiday.is_holiday(today):
+        logger.warning("土日祝日のため、質問を送信しません")
+        return
 
     users = await get_random_users()
     if not users:
