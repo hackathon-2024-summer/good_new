@@ -43,24 +43,26 @@ async def get_random_users():
 
 
 # Slack APIからユーザーに質問を送信する関数
-async def send_question_to_user(user):
+async def send_question_to_user(user, sent_messages):
     msg_block = [
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "こんにちは！ :wave:\n\nあなたの、24時間以内に起きた「よかったこと」や「新しい発見」を教えて下さい :star2:",
-                },
-                "accessory": {
-                    "type": "button",
-                    "text": {"type": "plain_text", "text": "回答する"},
-                    "value": "click_me_123",
-                    "action_id": "click_button_answer",
-                },
-            }
-        ]
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "こんにちは！ :wave:\n\nあなたの、24時間以内に起きた「よかったこと」や「新しい発見」を教えて下さい :star2:",
+            },
+            "accessory": {
+                "type": "button",
+                "text": {"type": "plain_text", "text": "回答する"},
+                "value": "click_me_123",
+                "action_id": "click_button_answer",
+            },
+        }
+    ]
 
-    response_data = await slack_app.client.chat_postMessage(channel=user["id"], blocks=msg_block)
+    response_data = await slack_app.client.chat_postMessage(
+        channel=user["id"], blocks=msg_block
+    )
 
     # JSONレスポンスの取得とエラーチェック
     if not response_data.get("ok"):
@@ -68,10 +70,12 @@ async def send_question_to_user(user):
         return "質問の送信に失敗しました"
     else:
         logger.info(f"質問を{user['name']}に送信しました")
+        # JSONレスポンスから、質問送信先チャンネルとタイムスタンプを取得
+        return response_data.get("channel"), response_data.get("ts")
 
 
 # Good and New Botから質問を送信する関数
-async def question():
+async def question(sent_messages):
     today = datetime.date.today()
     weekday = today.weekday()  # 0(月曜日)から6(日曜日)が取得できる
 
@@ -85,6 +89,11 @@ async def question():
         return
 
     for user in users:
-        await send_question_to_user(user)
-
-
+        channel_id, timestamp = await send_question_to_user(user, sent_messages)
+        if channel_id and timestamp:
+            # [sent_messages]辞書のkeyとして、SlackのユーザーIDを保存
+            sent_messages[user["id"]] = {
+                # [sent_messages]辞書のvalueとして、channel_idとtimestampを保存
+                "channel_id": channel_id,
+                "timestamp": timestamp,
+            }
