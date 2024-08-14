@@ -1,6 +1,7 @@
 import logging
 from fastapi import FastAPI
 from routers import slack, develop
+from utils.slack_oauth import init_slack_oauth
 from slack_schedule.question import question
 from slack_schedule.delivery import delivery
 from contextlib import asynccontextmanager
@@ -16,6 +17,10 @@ job_defaults = {"coalesce": False, "max_instances": 3, "misfire_grace_time": 360
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # slack_oauthに必要なテーブルの確認・作成
+    await init_slack_oauth()
+
+    # スケジュールの追加と起動
     global scheduler
     # 非同期処理のためBackgroundSchedulerから変更
     scheduler = AsyncIOScheduler(job_defaults=job_defaults)

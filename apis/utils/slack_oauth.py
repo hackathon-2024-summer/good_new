@@ -17,13 +17,7 @@ from slack_sdk.oauth.state_store.async_state_store import AsyncOAuthStateStore
 from slack_sdk.oauth.installation_store.sqlalchemy import SQLAlchemyInstallationStore
 from slack_sdk.oauth.state_store.sqlalchemy import SQLAlchemyOAuthStateStore
 
-from slack_bolt.adapter.fastapi import AsyncSlackRequestHandler
-from slack_bolt.async_app import AsyncApp
-from slack_bolt.context.say.async_say import AsyncSay
-from slack_bolt.oauth.async_oauth_settings import AsyncOAuthSettings
-
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from db_session import ASYNC_DB_URL
 
 # https://github.com/slackapi/bolt-python/blob/v1.1.1/examples/sqlalchemy/async_oauth_app.py
 # 上記コードより、DB接続の非同期対応をdatabases→AsyncSessionへ変更
@@ -67,14 +61,15 @@ class AsyncSQLAlchemyInstallationStore(AsyncInstallationStore):
             async with session.begin():
                 i = installation.to_dict()
                 i["client_id"] = self.client_id
-                session.add(self.installations.insert().values(**i))
+                await session.execute(self.installations.insert().values(**i))
                 b = installation.to_bot().to_dict()
                 b["client_id"] = self.client_id
-                session.add(self.bots.insert().values(**b))
+                await session.execute(self.bots.insert().values(**b))
 
     async def async_find_bot(
-        self, *, enterprise_id: Optional[str], team_id: Optional[str]
+        self, *, enterprise_id: Optional[str], team_id: Optional[str], is_enterprise_install: Optional[bool] = False
     ) -> Optional[Bot]:
+        # is_enterprise_installは元のコードには引数として入っていなかったが、設定しないとエラーになるため追加。
         async with self.session_factory() as session:
             c = self.bots.c
             query = (
@@ -87,14 +82,14 @@ class AsyncSQLAlchemyInstallationStore(AsyncInstallationStore):
             row = result.fetchone()
             if row:
                 return Bot(
-                    app_id=row["app_id"],
-                    enterprise_id=row["enterprise_id"],
-                    team_id=row["team_id"],
-                    bot_token=row["bot_token"],
-                    bot_id=row["bot_id"],
-                    bot_user_id=row["bot_user_id"],
-                    bot_scopes=row["bot_scopes"],
-                    installed_at=row["installed_at"],
+                    app_id=row.app_id,
+                    enterprise_id=row.enterprise_id,
+                    team_id=row.team_id,
+                    bot_token=row.bot_token,
+                    bot_id=row.bot_id,
+                    bot_user_id=row.bot_user_id,
+                    bot_scopes=row.bot_scopes,
+                    installed_at=row.installed_at,
                 )
             else:
                 return None
@@ -135,7 +130,7 @@ class AsyncSQLAlchemyOAuthStateStore(AsyncOAuthStateStore):
         now = datetime.utcfromtimestamp(time.time() + self.expiration_seconds)
         async with self.session_factory() as session:
             async with session.begin():
-                session.add(self.oauth_states.insert().values(state=state, expire_at=now))
+                await session.execute(self.oauth_states.insert().values(state=state, expire_at=now))
             return state
 
     async def async_consume(self, state: str) -> bool:
@@ -151,7 +146,7 @@ class AsyncSQLAlchemyOAuthStateStore(AsyncOAuthStateStore):
                     self.logger.debug(f"consume's query result: {row}")
                     if row:
                         await session.execute(
-                            self.oauth_states.delete().where(c.id == row["id"])
+                            self.oauth_states.delete().where(c.id == row.id)
                         )
                         return True
             return False
@@ -161,46 +156,20 @@ class AsyncSQLAlchemyOAuthStateStore(AsyncOAuthStateStore):
             return False
 
 
-database_url = "mysql+aiomysql://user:password@localhost/slackapp"  # 例としてMySQLの接続URL
+# ロギングの設定
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-client_id, client_secret, signing_secret = (
-    os.environ["SLACK_CLIENT_ID"],
-    os.environ["SLACK_CLIENT_SECRET"],
-    os.environ["SLACK_SIGNING_SECRET"],
-)
+
 
 installation_store = AsyncSQLAlchemyInstallationStore(
-    client_id=client_id, database_url=database_url, logger=logger,
+    client_id=os.environ["SLACK_CLIENT_ID"], database_url=ASYNC_DB_URL, logger=logger,
 )
 oauth_state_store = AsyncSQLAlchemyOAuthStateStore(
-    expiration_seconds=120, database_url=database_url, logger=logger,
+    expiration_seconds=300, database_url=ASYNC_DB_URL, logger=logger,
 )
 
-app = AsyncApp(
-    logger=logger,
-    signing_secret=signing_secret,
-    installation_store=installation_store,
-    oauth_settings=AsyncOAuthSettings(
-        client_id=client_id, client_secret=client_secret, state_store=oauth_state_store,
-    ),
-)
-app_handler = AsyncSlackRequestHandler(app)
-
-fastapi_app = FastAPI()
-
-@fastapi_app.post("/slack/events")
-async def endpoint(req: Request):
-    return await app_handler.handle(req)
-
-@fastapi_app.get("/slack/install")
-async def install(req: Request):
-    return await app_handler.handle(req)
-
-@fastapi_app.get("/slack/oauth_redirect")
-async def oauth_redirect(req: Request):
-    return await app_handler.handle(req)
-
-async def init():
+# slack_oauthに必要なテーブルの確認・作成
+async def init_slack_oauth():
     try:
         async with installation_store.engine.begin() as conn:
             await conn.execute("SELECT 1")
@@ -209,11 +178,3 @@ async def init():
             await conn.run_sync(installation_store.metadata.create_all)
             await conn.run_sync(oauth_state_store.metadata.create_all)
 
-
-if __name__ == "__main__":
-    import asyncio
-    import uvicorn
-
-    logging.basicConfig(level=logging.DEBUG)
-    asyncio.run(init())
-    uvicorn.run(fastapi_app, host="0.0.0.0", port=int(os.environ.get("PORT", 3000)))

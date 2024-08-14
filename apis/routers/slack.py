@@ -1,9 +1,11 @@
 import os
 from fastapi import APIRouter, Request
 from slack_bolt.async_app import AsyncApp
-from slack_bolt.oauth.oauth_settings import OAuthSettings
+from slack_bolt.oauth.async_oauth_settings import AsyncOAuthSettings
 from slack_bolt.adapter.fastapi.async_handler import AsyncSlackRequestHandler
 import logging
+
+from utils.slack_oauth import installation_store, oauth_state_store
 
 # ロギングの設定
 logging.basicConfig(level=logging.DEBUG)
@@ -11,35 +13,22 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["Slack"])
 
-# OAuth設定
-oauth_settings = OAuthSettings(
-    client_id=os.environ.get("SLACK_CLIENT_ID"),
-    client_secret=os.environ.get("SLACK_CLIENT_SECRET"),
 
-    scopes=["channels:read", "channels:manage", "groups:read", "users:read", "chat:write"],
-    installation_store={ 
-        "store": lambda installation: store_installation(installation),
-        "fetch": lambda query: fetch_installation(query),
-        # "store_org_installation": lambda installation: store_org_installation(installation),
-        # "fetch_org_installation": lambda query: fetch_org_installation(query),
-    },
+client_id, client_secret, signing_secret = (
+    os.environ["SLACK_CLIENT_ID"],
+    os.environ["SLACK_CLIENT_SECRET"],
+    os.environ["SLACK_SIGNING_SECRET"],
 )
 
-# Bolt for PythonのApp初期化
+# Slackアプリの設定（OAuth対応）
 slack_app = AsyncApp(
-    signing_secret=os.environ.get("SLACK_SIGNING_SECRET"),
-    oauth_settings=oauth_settings
+    logger=logger,
+    signing_secret=signing_secret,
+    installation_store=installation_store,
+    oauth_settings=AsyncOAuthSettings(
+        client_id=client_id, client_secret=client_secret, state_store=oauth_state_store,
+    ),
 )
-
-
-# # Slackアプリの設定
-# slack_app = AsyncApp(
-#     token=os.environ.get("SLACK_BOT_TOKEN"),
-#     signing_secret=os.environ.get("SLACK_SIGNING_SECRET"),
-#     # process_before_response=True,
-#     # request_verification_enabled=False,
-#     # ignoring_self_events_enabled=False  # self eventsの無視を無効にする
-# )
 
 handler = AsyncSlackRequestHandler(slack_app)
 
@@ -49,4 +38,12 @@ from slack_events import show_modal_answer, handle_submit_answer
 
 @router.post("/slack/events")
 async def slack_events(req: Request):
+    return await handler.handle(req)
+
+@router.get("/slack/install")
+async def install(req: Request):
+    return await handler.handle(req)
+
+@router.get("/slack/oauth_redirect")
+async def oauth_redirect(req: Request):
     return await handler.handle(req)

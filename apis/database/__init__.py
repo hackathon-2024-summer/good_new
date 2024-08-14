@@ -1,1 +1,1 @@
-from . import base, user, contents, teams
+from . import base, user, contents
