@@ -4,6 +4,10 @@ import jpholiday
 from routers.slack import slack_app, logger
 
 
+# タイムゾーンの設定
+JST = datetime.timezone(datetime.timedelta(hours=9))
+
+
 # Slack APIから全ユーザーを取得し、Botと削除済みユーザーを除外して返す
 async def get_slack_users():
     data = await slack_app.client.users_list()
@@ -44,6 +48,9 @@ async def get_random_users():
 
 # Slack APIからユーザーに質問を送信する関数
 async def send_question_to_user(user, sent_messages):
+    # 送信日をカスタムフィールドとしてvalueに格納
+    sent_date = str(datetime.datetime.now(JST).date())
+
     msg_block = [
         {
             "type": "section",
@@ -54,7 +61,7 @@ async def send_question_to_user(user, sent_messages):
             "accessory": {
                 "type": "button",
                 "text": {"type": "plain_text", "text": "回答する"},
-                "value": "click_me_123",
+                "value": sent_date,
                 "action_id": "click_button_answer",
             },
         }
@@ -69,7 +76,7 @@ async def send_question_to_user(user, sent_messages):
         logger.error(f"Slack API error: {response_data.get('error')}")
         return "質問の送信に失敗しました"
     else:
-        logger.info(f"質問を{user['name']}に送信しました")
+        logger.info(f"{sent_date}：質問を{user['name']}に送信しました")
         # JSONレスポンスから、質問送信先チャンネルとタイムスタンプを取得
         return response_data.get("channel"), response_data.get("ts")
 
