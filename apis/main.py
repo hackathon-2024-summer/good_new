@@ -2,6 +2,7 @@ import logging
 from fastapi import FastAPI
 from routers import slack, develop
 from slack_schedule.question import question
+from slack_schedule.delivery import delivery
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from slack_schedule.update_question import update_question_to_user
@@ -32,6 +33,10 @@ async def lifespan(app: FastAPI):
         hour=0,
         minute=0,
     )
+    scheduler.add_job(
+        lambda: asyncio.run(delivery), "cron", hour=16, minute=0
+    )
+    # scheduler.add_job(delivery, "interval", minutes=1) # 検証用
     scheduler.start()
     logger.info("Scheduler started")
 
