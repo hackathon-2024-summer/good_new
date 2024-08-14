@@ -34,7 +34,7 @@ async def lifespan(app: FastAPI):
         minute=0,
     )
     scheduler.add_job(
-        lambda: asyncio.run(delivery), "cron", hour=16, minute=0
+        lambda: asyncio.run(delivery()), "cron", hour=16, minute=0
     )
     # scheduler.add_job(delivery, "interval", minutes=1) # 検証用
     scheduler.start()
