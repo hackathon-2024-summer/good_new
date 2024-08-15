@@ -20,6 +20,7 @@ async def handle_message_events(body, say, logger):
                 "accessory": {
                     "type": "button",
                     "text": {"type": "plain_text", "text":"回答する"},
+                    "value": "2024-08-14",
                     "action_id": "click_button_answer"
                 }
             }
