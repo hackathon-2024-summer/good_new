@@ -82,7 +82,7 @@ async def delivery():
     weekday = today.weekday()  # 0(月曜日)から6(日曜日)が取得できる
 
     if weekday >= 5 or jpholiday.is_holiday(today):
-        logger.warning("土日祝日のため、質問を送信しません")
+        logger.warning("土日祝日のため、メッセージを送信しません")
         return
 
 
@@ -98,6 +98,7 @@ async def delivery():
         
         else:
             logger.info("messageをPOSTしました")
+            return
 
     
     for content in contents:
@@ -112,6 +113,7 @@ async def delivery():
             logger.debug(f"GoodAndNewをポストしました {channel_id}: {response}")
         except Exception as e:
             logger.error(f"error {channel_id}: {e}")
+    
     
     content_ids = [content[0] for content in contents]
     await Contents.updateDelivery(content_ids)

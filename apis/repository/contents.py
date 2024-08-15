@@ -1,10 +1,15 @@
 from database.contents import Content
 from db_session import get_db
 from sqlalchemy import func, select, update
+from datetime import datetime, timedelta
 
 class Contents:
     @staticmethod
     async def delivery() -> list[tuple[str, str, str]]:
+        # 現在の日付
+        current_date = datetime.now()
+        # 5日前の日付
+        five_days_ago = current_date - timedelta(days=5)
         async for db in get_db():
             try:
                 subquery = (
@@ -13,6 +18,7 @@ class Contents:
                         func.min(Content.id).label("id")  # 各ユーザーの最初のコンテンツIDを取得
                     )
                     .filter(Content.is_delivered == False)
+                    .filter(Content.content_date >= five_days_ago)
                     .group_by(Content.user_id)
                     .subquery()
                 )
