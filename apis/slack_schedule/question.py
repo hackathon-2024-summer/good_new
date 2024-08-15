@@ -47,7 +47,7 @@ async def get_random_users():
 
 
 # Slack APIからユーザーに質問を送信する関数
-async def send_question_to_user(user, sent_messages):
+async def send_question_to_user(user):
     # 送信日をカスタムフィールドとしてvalueに格納
     sent_date = str(datetime.datetime.now(JST).date())
 
@@ -56,7 +56,7 @@ async def send_question_to_user(user, sent_messages):
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "こんにちは！ :wave:\n\nあなたの、24時間以内に起きた「よかったこと」や「新しい発見」を教えて下さい :star2:",
+                "text": "こんにちは！ :wave:\n\nあなたの、24時間以内に起きた「よかったこと」や「新しい発見」を教えて下さい :star2:\n（回答期限：質問された当日中）",
             },
             "accessory": {
                 "type": "button",
@@ -82,7 +82,7 @@ async def send_question_to_user(user, sent_messages):
 
 
 # Good and New Botから質問を送信する関数
-async def question(sent_messages):
+async def question():
     today = datetime.date.today()
     weekday = today.weekday()  # 0(月曜日)から6(日曜日)が取得できる
 
@@ -96,11 +96,5 @@ async def question(sent_messages):
         return
 
     for user in users:
-        channel_id, timestamp = await send_question_to_user(user, sent_messages)
-        if channel_id and timestamp:
-            # [sent_messages]辞書のkeyとして、SlackのユーザーIDを保存
-            sent_messages[user["id"]] = {
-                # [sent_messages]辞書のvalueとして、channel_idとtimestampを保存
-                "channel_id": channel_id,
-                "timestamp": timestamp,
-            }
+        await send_question_to_user(user)
+        
