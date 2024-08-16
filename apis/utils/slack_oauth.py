@@ -6,7 +6,8 @@ from logging import Logger
 from typing import Optional
 from uuid import uuid4
 
-from sqlalchemy import and_, desc, Table, MetaData
+from sqlalchemy import and_, desc, Table, MetaData, func
+from sqlalchemy import select as sql_select
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from slack_sdk.oauth.installation_store import Bot, Installation
@@ -21,6 +22,7 @@ from db_session import ASYNC_DB_URL
 
 # https://github.com/slackapi/bolt-python/blob/v1.1.1/examples/sqlalchemy/async_oauth_app.py
 # 上記コードより、DB接続の非同期対応をdatabases→AsyncSessionへ変更
+# async_find_all()は新たに作成
 
 class AsyncSQLAlchemyInstallationStore(AsyncInstallationStore):
     client_id: str
@@ -93,6 +95,50 @@ class AsyncSQLAlchemyInstallationStore(AsyncInstallationStore):
                 )
             else:
                 return None
+
+    # アプリをインストールしている全てのワークスペースのBOTリストを取得
+    async def async_find_all(self) -> list[Bot]:
+        async with self.session_factory() as session:
+            c = self.bots.c
+            # サブクエリで team_id ごとの最新の installed_at を取得
+            subquery = (
+                sql_select(
+                    c.team_id,
+                    func.max(c.installed_at).label("latest_installed_at")
+                )
+                .group_by(c.team_id)
+                .subquery()
+            )
+            # メインクエリで、サブクエリと bots テーブルを結合し、最新のインストール情報を取得
+            query = (
+                sql_select(self.bots)
+                .join(
+                    subquery,
+                    and_(
+                        c.team_id == subquery.c.team_id,
+                        c.installed_at == subquery.c.latest_installed_at,
+                    )
+                )
+            )
+
+            result = await session.execute(query)
+            rows = result.fetchall()
+
+            bots = []
+            for row in rows:
+                bots.append(
+                    Bot(
+                        app_id=row.app_id,
+                        enterprise_id=row.enterprise_id,
+                        team_id=row.team_id,
+                        bot_token=row.bot_token,
+                        bot_id=row.bot_id,
+                        bot_user_id=row.bot_user_id,
+                        bot_scopes=row.bot_scopes,
+                        installed_at=row.installed_at,
+                    )
+                )
+            return bots
 
 
 class AsyncSQLAlchemyOAuthStateStore(AsyncOAuthStateStore):
