@@ -93,6 +93,7 @@ async def show_modal_answer(ack, body, client):
         logger.info(f"質問日{value}：回答締め切りのモーダルを作成")
 
     # モーダルを表示
+    # slack側からのイベント処理をする時は、slackAPIを直接使用する（イベントが発生したBOTの情報が必要なため）
     response = await client.views_open(
         trigger_id=body["trigger_id"],
         view=modal_view

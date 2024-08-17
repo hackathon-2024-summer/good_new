@@ -1,7 +1,7 @@
 import random
 import datetime
 import jpholiday
-from routers.slack import slack_app, logger
+from routers.slack import logger
 from slack_apis.users import get_slack_users
 from slack_apis.chat import slack_post_message
 from utils.slack_oauth import installation_store
@@ -9,10 +9,6 @@ from utils.slack_oauth import installation_store
 
 # タイムゾーンの設定
 JST = datetime.timezone(datetime.timedelta(hours=9))
-
-
-
-
 
 # get_slack_usersを利用して、ランダムに5人のユーザーを取得する
 async def get_random_users(token):
@@ -54,7 +50,6 @@ async def send_question_to_user(token, user):
 
     response_data = await slack_post_message(token=token, channel=user["id"], blocks=msg_block)
     
-
     # JSONレスポンスの取得とエラーチェック
     if not response_data.get("ok"):
         logger.error(f"Slack API error: {response_data.get('error')}")
@@ -70,9 +65,9 @@ async def question():
     today = datetime.date.today()
     weekday = today.weekday()  # 0(月曜日)から6(日曜日)が取得できる
 
-    if weekday >= 5 or jpholiday.is_holiday(today):
-        logger.warning("土日祝日のため、質問を送信しません")
-        return
+    # if weekday >= 5 or jpholiday.is_holiday(today):
+    #     logger.warning("土日祝日のため、質問を送信しません")
+    #     return
     
     # アプリをインストールしている全てのワークスペース情報を取得
     installations = await installation_store.async_find_all()
