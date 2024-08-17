@@ -5,7 +5,7 @@ from slack_bolt.oauth.async_oauth_settings import AsyncOAuthSettings
 from slack_bolt.adapter.fastapi.async_handler import AsyncSlackRequestHandler
 import logging
 
-from utils.slack_oauth import installation_store, oauth_state_store
+from repository.slack_oauth import installation_store, oauth_state_store
 
 # ロギングの設定
 logging.basicConfig(level=logging.DEBUG)

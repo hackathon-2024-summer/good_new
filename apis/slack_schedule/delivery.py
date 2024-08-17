@@ -4,7 +4,7 @@ from routers.slack import logger
 from slack_apis.conversations import get_target_slack_channel
 from utils.date import format_date_slash
 from slack_apis.chat import slack_post_message
-from utils.slack_oauth import installation_store
+from repository.slack_oauth import installation_store
 from repository.contents import Contents
 
 

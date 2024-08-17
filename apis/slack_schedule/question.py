@@ -4,7 +4,7 @@ import jpholiday
 from routers.slack import logger
 from slack_apis.users import get_slack_users
 from slack_apis.chat import slack_post_message
-from utils.slack_oauth import installation_store
+from repository.slack_oauth import installation_store
 
 
 # タイムゾーンの設定

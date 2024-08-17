@@ -1,7 +1,7 @@
 import logging
 from fastapi import FastAPI
 from routers import slack, develop
-from utils.slack_oauth import init_slack_oauth
+from repository.slack_oauth import init_slack_oauth
 from slack_schedule.question import question
 from slack_schedule.delivery import delivery
 from contextlib import asynccontextmanager
