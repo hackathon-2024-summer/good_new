@@ -37,7 +37,7 @@ async def send_question_to_user(token, user):
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "こんにちは！ :wave:\n\nあなたの、24時間以内に起きた「よかったこと」や「新しい発見」を教えて下さい :star2:\n（回答期限：質問された当日中）",
+                "text": "こんにちは！ :wave:\n\nあなたの、24時間以内に起きた「よかったこと」や「新しい発見」を教えて下さい :star2: （回答期限：本日中）",
             },
             "accessory": {
                 "type": "button",

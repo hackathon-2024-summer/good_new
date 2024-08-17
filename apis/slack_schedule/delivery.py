@@ -42,10 +42,28 @@ async def delivery():
         
         for content in contents:
             user_id = content[2]
-            message = f"<@{user_id}> さんの{format_date_slash(content[3])}のGoodAndNew！\n {content[1]}"
+            msg_block = [
+                {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"<@{user_id}> さんから {format_date_slash(content[3])} のGood & Newが届きました :star2:"
+                    }
+                },
+                {
+                "type": "divider"
+                },
+                {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": content[1]
+                    }
+                }
+            ]
             
             try:
-                response = await slack_post_message(token=token, channel=channel_id, text=message)
+                response = await slack_post_message(token=token, channel=channel_id, blocks=msg_block)
                 logger.debug(f"GoodAndNewをポストしました {channel_id}: {response}")
             except Exception as e:
                 logger.error(f"error {channel_id}: {e}")
