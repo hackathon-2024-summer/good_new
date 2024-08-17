@@ -2,31 +2,15 @@ import random
 import datetime
 import jpholiday
 from routers.slack import slack_app, logger
+from slack_apis.users import get_slack_users
+from slack_apis.chat import slack_post_message
 
 
 # タイムゾーンの設定
 JST = datetime.timezone(datetime.timedelta(hours=9))
 
 
-# Slack APIから全ユーザーを取得し、Botと削除済みユーザーを除外して返す
-async def get_slack_users():
-    data = await slack_app.client.users_list()
 
-    # APIレスポンス全体を出力
-    logger.debug(f"Slack API response: {data}")
-
-    # レスポンスの中身をチェック
-    if not data.get("ok"):
-        logger.error(f"Slack API error: {data.get('error')}")
-        return "Slack usersの取得に失敗しました"
-
-    # ボットユーザーと削除済みユーザーを除外
-    members = data.get("members", [])
-    real_users = [
-        user for user in members if not user.get("is_bot") and not (user.get("deleted"))
-    ]
-
-    return real_users
 
 
 # get_slack_usersを利用して、ランダムに5人のユーザーを取得する
@@ -67,9 +51,8 @@ async def send_question_to_user(user):
         }
     ]
 
-    response_data = await slack_app.client.chat_postMessage(
-        channel=user["id"], blocks=msg_block
-    )
+    response_data = await slack_post_message(channel=user["id"], blocks=msg_block)
+    
 
     # JSONレスポンスの取得とエラーチェック
     if not response_data.get("ok"):

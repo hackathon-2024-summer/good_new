@@ -8,6 +8,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from contextlib import asynccontextmanager
 import logging
+from slack_apis.chat import slack_post_message
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -46,7 +47,7 @@ app = FastAPI(lifespan=lifespan)
 # チャンネルにメッセージに送信する関数
 def send_message_to_channel(channel_id: str, message: str):
     try:
-        response = client.chat_postMessage(channel=channel_id, text=message)
+        response = slack_post_message(channel=channel_id, text=message)
         logger.info(f"Message sent: {response['ts']}")
     except SlackApiError as e:
         logger.error(f"Error sending message: {e}")
@@ -54,7 +55,7 @@ def send_message_to_channel(channel_id: str, message: str):
 
 def send_dm_to_user(user_id: str, message: str):
     try:
-        response = client.chat_postMessage(channel=user_id, text=message)
+        response = slack_post_message(channel=user_id, text=message)
         logger.info(f"DM sent: {response['ts']}")
     except SlackApiError as e:
         logger.error(f"Error sending DM: {e}")
