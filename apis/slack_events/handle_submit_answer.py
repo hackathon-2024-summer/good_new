@@ -48,6 +48,7 @@ async def handle_submit_answer(ack, body, client, view, logger):
     try:
         # slack側からのイベント処理をする時は、slackAPIを直接使用する（イベントが発生したBOTの情報が必要なため）
         await client.chat_postMessage(channel=user_id, text=msg)
+
     except Exception as e:
         logger.exception(f"Failed to post a message {e}") 
 

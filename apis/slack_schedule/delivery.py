@@ -1,9 +1,10 @@
 from datetime import date
 import jpholiday
-from routers.slack import slack_app, logger
+from routers.slack import logger
 from slack_apis.conversations import get_target_slack_channel
 from utils.date import format_date_slash
 from slack_apis.chat import slack_post_message
+from utils.slack_oauth import installation_store
 from repository.contents import Contents
 
 
@@ -15,34 +16,42 @@ async def delivery():
         logger.warning("土日祝日のため、メッセージを送信しません")
         return
 
+    # アプリをインストールしている全てのワークスペース情報を取得
+    installations = await installation_store.async_find_all()
 
-    contents = await Contents.delivery()
-    channel = await get_target_slack_channel("雑談")
-    channel_id = channel.get('id')
+    for installation in installations:
+        # 各インストールに対してBOTトークンとteam_idを取得
+        token = installation.bot_token
+        team_id = installation.team_id
 
-    if not len(contents):
-        response_data = await slack_post_message(channel=channel_id, text="みなさんのGoodAndNewをお待ちしています！")
-        if not response_data.get("ok"):
-            logger.error(f"Slack API error: {response_data.get('error')}")
-            return "メッセージの送信に失敗しました"
+        contents = await Contents.delivery(team_id)
+        channel = await get_target_slack_channel(channel_name="雑談", token=token)
+        channel_id = channel.get('id')
+
+        if not len(contents):
+            response_data = await slack_post_message(
+                token=token, channel=channel_id, text="みなさんのGood & Newをお待ちしています！")
+            if not response_data.get("ok"):
+                logger.error(f"Slack API error: {response_data.get('error')}")
+                return "メッセージの送信に失敗しました"
+            
+            else:
+                logger.info("messageをPOSTしました")
+                return
+
         
-        else:
-            logger.info("messageをPOSTしました")
-            return
-
-    
-    for content in contents:
-        user_id = content[2]
-        message = f"<@{user_id}> さんの{format_date_slash(content[3])}のGoodAndNew！\n {content[1]}"
+        for content in contents:
+            user_id = content[2]
+            message = f"<@{user_id}> さんの{format_date_slash(content[3])}のGoodAndNew！\n {content[1]}"
+            
+            try:
+                response = await slack_post_message(token=token, channel=channel_id, text=message)
+                logger.debug(f"GoodAndNewをポストしました {channel_id}: {response}")
+            except Exception as e:
+                logger.error(f"error {channel_id}: {e}")
         
-        try:
-            response = await slack_post_message(channel=channel_id, text=message)
-            logger.debug(f"GoodAndNewをポストしました {channel_id}: {response}")
-        except Exception as e:
-            logger.error(f"error {channel_id}: {e}")
-    
-    
-    content_ids = [content[0] for content in contents]
-    await Contents.updateDelivery(content_ids)
+        
+        content_ids = [content[0] for content in contents]
+        await Contents.updateDelivery(content_ids)
        
 

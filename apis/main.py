@@ -6,7 +6,7 @@ from slack_schedule.question import question
 from slack_schedule.delivery import delivery
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-import asyncio
+
 
 # ロギングの設定
 logging.basicConfig(level=logging.DEBUG)
@@ -24,13 +24,9 @@ async def lifespan(app: FastAPI):
     global scheduler
     # 非同期処理のためBackgroundSchedulerから変更
     scheduler = AsyncIOScheduler(job_defaults=job_defaults)
-    scheduler.add_job(
-        question, "cron", hour=14, minute=21
-    )
+    scheduler.add_job(question, "cron", hour=14, minute=0)
     # scheduler.add_job(question, "interval", minutes=1) # 検証用
-    scheduler.add_job(
-        delivery, "cron", hour=16, minute=0
-    )
+    scheduler.add_job(delivery, "cron", hour=16, minute=0)
     # scheduler.add_job(delivery, "interval", minutes=1) # 検証用
     scheduler.start()
     logger.info("Scheduler started")
