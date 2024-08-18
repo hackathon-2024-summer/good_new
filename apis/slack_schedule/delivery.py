@@ -12,9 +12,9 @@ async def delivery():
     today = date.today()
     weekday = today.weekday()  # 0(月曜日)から6(日曜日)が取得できる
 
-    # if weekday >= 5 or jpholiday.is_holiday(today):
-    #     logger.warning("土日祝日のため、メッセージを送信しません")
-    #     return
+    if weekday >= 5 or jpholiday.is_holiday(today):
+        logger.warning("土日祝日のため、メッセージを送信しません")
+        return
 
     # アプリをインストールしている全てのワークスペース情報を取得
     installations = await installation_store.async_find_all()

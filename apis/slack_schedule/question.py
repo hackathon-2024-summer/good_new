@@ -56,8 +56,6 @@ async def send_question_to_user(token, user):
         return "質問の送信に失敗しました"
     else:
         logger.info(f"{sent_date}：質問を{user['name']}に送信しました")
-        # JSONレスポンスから、質問送信先チャンネルとタイムスタンプを取得
-        return response_data.get("channel"), response_data.get("ts")
 
 
 # Good and New Botから質問を送信する関数
