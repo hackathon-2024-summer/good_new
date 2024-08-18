@@ -5,6 +5,19 @@ from datetime import datetime, timedelta
 
 class Contents:
     @staticmethod
+    async def add(team_id, user_id, content):
+        async for db in get_db():
+            try:
+                # データ作成（id, content_date, is_deliveredは登録時にDB側でデフォルト値が入る）
+                new_content = Content(team_id = team_id, user_id = user_id, content = content)
+                # DBへ追加
+                db.add(new_content)
+                await db.commit()
+            except:
+                raise
+
+
+    @staticmethod
     async def delivery(team_id) -> list[tuple[str, str, str]]:
         # 現在の日付
         current_date = datetime.now()
