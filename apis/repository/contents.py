@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 class Contents:
     @staticmethod
-    async def delivery() -> list[tuple[str, str, str]]:
+    async def delivery(team_id) -> list[tuple[str, str, str]]:
         # 現在の日付
         current_date = datetime.now()
         # 5日前の日付
@@ -17,7 +17,7 @@ class Contents:
                         Content.user_id,
                         func.min(Content.id).label("id")  # 各ユーザーの最初のコンテンツIDを取得
                     )
-                    .filter(Content.is_delivered == False)
+                    .filter(Content.team_id == team_id, Content.is_delivered == False)
                     .filter(Content.content_date >= five_days_ago)
                     .group_by(Content.user_id)
                     .subquery()

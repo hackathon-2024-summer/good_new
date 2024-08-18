@@ -3,8 +3,8 @@ from slack_apis.users import get_slack_users
 
 # conversations https://api.slack.com/apis/conversations-api
 
-async def get_target_slack_channel(channel_name: str):
-    data = await slack_app.client.conversations_list()
+async def get_target_slack_channel(channel_name: str, token: str):
+    data = await slack_app.client.conversations_list(token=token)
     
     # APIレスポンス全体を出力
     logger.debug(f"Slack API response: {data}")
@@ -27,11 +27,12 @@ async def get_target_slack_channel(channel_name: str):
         return target_channel
     
     # 雑談チャンネルがない場合はチャンネルを作成する
-    created_channel = await create_slack_channle("雑談",False)
+    created_channel = await create_slack_channle(channel_name="雑談", is_private=False, token=token)
     return created_channel
 
-async def create_slack_channle(channel_name: str,is_private: bool):
+async def create_slack_channle(channel_name: str, is_private: bool, token: str):
     data = await slack_app.client.conversations_create(
+        token=token,
         name=channel_name,  # チャンネル名
         is_private=is_private  # パブリックチャンネルにする場合はFalse
     )
@@ -45,7 +46,7 @@ async def create_slack_channle(channel_name: str,is_private: bool):
         return "Slack channelの作成に失敗しました"
     
     # userを作成したチャンネルに招待する
-    users = await get_slack_users()
+    users = await get_slack_users(token)
     user_ids = [user.get('id') for user in users]
  
     # 100名ずつしか追加できないようなので分割する
@@ -60,6 +61,7 @@ async def create_slack_channle(channel_name: str,is_private: bool):
     
     for user_id_list in user_list:
         data = await slack_app.client.conversations_invite(
+            token=token,
             channel=channel_id,
             users=",".join(user_id_list)
         )

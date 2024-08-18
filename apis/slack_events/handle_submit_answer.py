@@ -1,7 +1,6 @@
 from db_session import get_db
 from database.contents import Content
 from routers.slack import slack_app
-from slack_apis.chat import slack_post_message
 
 
 # 送信された回答をDBに保存
@@ -47,7 +46,9 @@ async def handle_submit_answer(ack, body, client, view, logger):
 
     # ユーザーにメッセージを送信
     try:
-        await slack_post_message(channel=user_id, text=msg)
-    except e:
+        # slack側からのイベント処理をする時は、slackAPIを直接使用する（イベントが発生したBOTの情報が必要なため）
+        await client.chat_postMessage(channel=user_id, text=msg)
+
+    except Exception as e:
         logger.exception(f"Failed to post a message {e}") 
 
