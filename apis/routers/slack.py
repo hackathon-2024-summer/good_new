@@ -1,5 +1,5 @@
 import os
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Response
 from slack_bolt.async_app import AsyncApp
 from slack_bolt.oauth.async_oauth_settings import AsyncOAuthSettings
 from slack_bolt.adapter.fastapi.async_handler import AsyncSlackRequestHandler
@@ -33,7 +33,6 @@ slack_app = AsyncApp(
 handler = AsyncSlackRequestHandler(slack_app)
 
 # slack_appを定義した後でslack_eventsをインポートする
-from slack_events import parrot_bot
 from slack_events import show_modal_answer, handle_submit_answer
 
 @router.post("/slack/events")
@@ -47,3 +46,7 @@ async def install(req: Request):
 @router.get("/slack/oauth_redirect")
 async def oauth_redirect(req: Request):
     return await handler.handle(req)
+
+@router.get("/health.html")
+async def health_check():
+    return Response(status_code=200)

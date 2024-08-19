@@ -1,6 +1,6 @@
 import logging
 from fastapi import FastAPI
-from routers import slack, develop
+from routers import slack
 from repository.slack_oauth import init_slack_oauth
 from slack_schedule.question import question
 from slack_schedule.delivery import delivery
@@ -40,4 +40,4 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(slack.router)
-app.include_router(develop.router)
+
