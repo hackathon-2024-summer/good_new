@@ -19,3 +19,4 @@ apscheduler
 requests
 jpholiday
 aiohttp
+jinja2
