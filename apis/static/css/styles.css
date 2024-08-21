@@ -96,7 +96,14 @@
     color: var(--brown);
     font-size: var(--font-32px);
     font-weight: 800;
+    text-align: center;
     margin-bottom: 4rem;
+  }
+
+  section h3 {
+    color: var(--brown);
+    font-size: var(--font-20px);
+    margin-bottom: 1rem;
   }
 
   /* .text-brown {
@@ -185,7 +192,7 @@
   .title-section p {
     color: var(--brown);
     font-size: var(--font-36px);
-    margin-bottom: 3rem;
+    margin-bottom: 5rem;
   }
 
 /*-------------------------------------------
@@ -213,3 +220,73 @@
   .cannnotdecide-image {
     width: 145px;
   }
+
+  .inpiration-image {
+    width: 180px;
+    object-fit: contain;
+  }
+
+  .down-arrow-image {
+    width: 85px;
+    margin-bottom: 4rem;
+  }
+
+/*-------------------------------------------
+  Good&Newセクション
+  -------------------------------------------*/
+  .good-new-section {
+    margin: 5rem 0;
+  }
+
+  .good-new-section p, ol {
+    margin-bottom: 3rem;
+  }
+
+  .good-new-section li {
+    list-style: decimal inside;
+  }
+
+  .good-new-section img {
+    width: 445px;
+  }
+
+  .effect {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+  }
+
+  .summary {
+    color: var(--pale-brown);
+    font-size: var(--font-20px);
+    font-weight: 800;
+  }
+
+/*-------------------------------------------
+  アプリの機能セクション
+  -------------------------------------------*/
+  .func-section {
+    margin: 5rem 0;
+  }
+
+  .sub-words {
+    color: var(--pale-brown);
+    font-size: var(--font-20px);
+    font-weight: 800;
+    margin-bottom: 0;
+  }
+
+  .func {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .func img {
+    width: 230px;
+    margin-bottom: 2rem;
+  }
+
+  .func p {
+    width: 230px;
+  }
+
