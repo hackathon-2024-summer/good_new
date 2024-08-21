@@ -73,9 +73,9 @@ https://<公開URL>/slack/oauth_redirectを指定
 Manage Distribution/Share Your App with Other WorkspaceのRemove Hard Coded Informationにチェック
 その後Activate Public Distributionにチェック
 
-Slack API/Basic Informationにある3つの認証情報を環境変数に追加
-SLACK_CLIENT_ID=7471537795238.7491629516932
-SLACK_CLIENT_SECRET=e54cd3969a944c49a24c5f13829a6cbf
+Slack API/Basic Informationにある2つの認証情報と以下のscope情報を環境変数に追加
+SLACK_CLIENT_ID
+SLACK_CLIENT_SECRET
 SLACK_SCOPES=channels:history,channels:read,channels:manage,channels:write.invites,chat:write,im:history,im:read,im:write,groups:history,groups:read,groups:write,groups:write.invites,mpim:write,users:read
 
 バックエンドとデータベースが動作中に以下URLをブラウザからアクセスしてOAuth関連のデータをインストール
