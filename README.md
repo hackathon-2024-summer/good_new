@@ -64,3 +64,46 @@ Slack AppとはSlack ワークスペースで実行するアプリケーショ�
 26. 「インテグレーション」タブから「アプリを追加する」を押下
 27. 作成したアプリの「追加」を押下
 28. 追加したチャンネル内でメッセージやDMを投稿すると、アプリがオウム返ししてくれることを確認
+
+## チームによるOAuth
+
+OAuth & Permissions / Redirect URLsで
+https://<公開URL>/slack/oauth_redirectを指定
+
+Manage Distribution/Share Your App with Other WorkspaceのRemove Hard Coded Informationにチェック
+その後Activate Public Distributionにチェック
+
+Slack API/Basic Informationにある2つの認証情報と以下のscope情報を環境変数に追加
+SLACK_CLIENT_ID
+SLACK_CLIENT_SECRET
+SLACK_SCOPES=channels:history,channels:read,channels:manage,channels:write.invites,chat:write,im:history,im:read,im:write,groups:history,groups:read,groups:write,groups:write.invites,mpim:write,users:read
+
+バックエンドとデータベースが動作中に以下URLをブラウザからアクセスしてOAuth関連のデータをインストール
+ブラウザのSlack AppによるInstall Appではなく、自分のAppとbotであっても、これでインストールしないとDBと関係付けられない。
+
+<https://goodandnew.blog/slack/install>
+<https://7b19-222-229-40-231.ngrok-free.app/slack/install>
+
+Enable EventsのRequest URL
+<https://goodandnew.blog/slack/events>
+<https://7b19-222-229-40-231.ngrok-free.app/slack/events>
+
+OAuth & PermissionsのRedirect URLs
+
+<https://goodandnew.blog/slack/oauth_redirect>
+<https://7b19-222-229-40-231.ngrok-free.app/slack/oauth_redirect>
+
+Interactivity & Request URLs
+
+<https://goodandnew.blog/slack/events>
+<https://7b19-222-229-40-231.ngrok-free.app/slack/events>
+
+## botのDMを削除する方法
+
+botのDMのリンクをコピーする。例えばこの場合
+<https://2024bco.slack.com/archives/D07ED4EGE6N/p1724112045006779>
+
+D07ED4EGE6Nがchannel、p1724112045.006779 がts(timestamp)になる。6桁目に.を置く。
+
+以下にアクセスしprovide your own token: botのtokenとchannel ID、tsを入力して削除
+<https://api.slack.com/methods/chat.delete/test>
