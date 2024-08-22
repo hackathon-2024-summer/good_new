@@ -39,7 +39,7 @@ from slack_events import show_modal_answer, handle_submit_answer
 async def slack_events(req: Request):
     return await handler.handle(req)
 
-@router.get("/slack/install")
+@router.get("/slack/install", name="install")
 async def install(req: Request):
     return await handler.handle(req)
 

@@ -18,26 +18,26 @@
     <link rel="stylesheet" href="/static/css/layout.css"> 
     
     <!-- ページ別のCSS -->
-	{%- block css %}{% endblock %}
+	  {%- block css %}{% endblock %}
 
   </head>
 
   <body>
     <!-- ヘッダー -->
     <header>
-      <div class="header content-wrapper">
+      <div class="header content-wrapper-930">
         <div>
-          <a href="index.html" class="logo">
+          <a href="{{ url_for('index') }}" class="logo">
             <img src="static/images/good_new_icon_noBack.png" alt="アイコン" />
             <p>Good and New</p>
           </a>
         </div>                    
         <nav>
           <ul>
-            <li><a href="">使い方</a></li>
-            <li><a href="">Q&A</a></li>
+            <li><a href="{{ url_for('howto') }}">使い方</a></li>
+            <li><a href="{{ url_for('faq') }}">Q&A</a></li>
             <li>
-              <a href="" class="btn">Slackにアプリをインストールする</a>
+              <a href="{{ url_for('install') }}" class="btn">Slackにアプリをインストールする</a>
             </li>
           </ul>
         </nav>
@@ -45,7 +45,7 @@
     </header>
 
     <!-- メインコンテンツ -->
-	{%- block content %}{% endblock %}
+	  {%- block content %}{% endblock %}
     
   </body>
 

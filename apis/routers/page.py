@@ -12,7 +12,18 @@ templates = Jinja2Templates(directory="templates")
 
 router = APIRouter(tags=["Pages"])
 
-@router.get("/", response_class=HTMLResponse)
+
+@router.get("/", name="index", response_class=HTMLResponse)
 async def read_root(request: Request):
     context = {"request": request}
     return templates.TemplateResponse("index.html", context)
+
+@router.get("/howto", name="howto", response_class=HTMLResponse)
+async def read_howto(request: Request):
+    context = {"request": request}
+    return templates.TemplateResponse("howto.html", context)
+
+@router.get("/faq", name="faq", response_class=HTMLResponse)
+async def read_faq(request: Request):
+    context = {"request": request}
+    return templates.TemplateResponse("faq.html", context)

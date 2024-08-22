@@ -27,6 +27,7 @@
   section h3 {
     color: var(--brown);
     font-size: var(--font-20px);
+    font-weight: 500;
     margin-bottom: 1rem;
   }
 
@@ -94,7 +95,7 @@
     margin: 5rem 0;
   }
 
-  .good-new-section p, ol {
+  .good-new-section p, .good-new-section ol {
     margin-bottom: 3rem;
   }
 

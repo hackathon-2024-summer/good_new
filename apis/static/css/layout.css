@@ -70,11 +70,11 @@
 /*-------------------------------------------
   共通レイアウト
   -------------------------------------------*/
-  .content-wrapper {
+  .content-wrapper-930 {
     width: 100%;
     max-width: 930px;
   }
-
+  
   .beige-color {
     background-color: var(--beige);
   }
