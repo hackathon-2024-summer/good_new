@@ -14,8 +14,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&display=swap" rel="stylesheet">
     
-    <!-- オリジナルCSS -->
-    <link rel="stylesheet" href="/static/css/styles.css">
+    <!-- レイアウトCSS -->
+    <link rel="stylesheet" href="/static/css/layout.css"> 
+    
+    <!-- ページ別のCSS -->
+	{%- block css %}{% endblock %}
+
   </head>
 
   <body>
