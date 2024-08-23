@@ -35,6 +35,7 @@
     font-weight: 500;
     font-style: normal;
     color: var(--text-gray);
+    padding-top: 76px;
   }
 
   main {
@@ -100,10 +101,13 @@
   ヘッダー
   -------------------------------------------*/
   header {
+    position: fixed;
+    top: 0;
+    left: 0;
     background-color: var(--beige);
     display: flex;
     justify-content: center;
-    padding: 1.25rem 0;
+    padding: 0.5rem 0;
     width: 100%;
   }
 
