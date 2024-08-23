@@ -33,7 +33,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 5rem;
+    margin-bottom: 3rem;
   }
 
   .howto p {
@@ -53,11 +53,15 @@
   }
 
   .howto1-image {
-    width: 300px;
+    width: 260px;
   }
 
   .howto2-image {
     width: 240px;
+  }
+
+  .howto3-image {
+    width: 260px;
   }
 
   .summary {
