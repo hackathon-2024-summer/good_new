@@ -26,20 +26,45 @@
   アプリの使い方
   -------------------------------------------*/
   .howto-section {
-    font-size: var(--font-20px);
     margin: 5rem 0;
   }
-
-  .howto-section p, .howto-section ol, .howto-section li {
-    margin-bottom: 1.5rem;
+  
+  .howto {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 5rem;
   }
 
-  .howto-section li {
-    list-style: decimal inside;
+  .howto p {
+    margin-bottom: 3rem;
+  }
+
+  .number {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: var(--pale-brown);
+    color: var(--beige);
+    font-size: var(--font-32px);
+    font-weight: 800;
+    text-align: center;
+    line-height: 70px;
+  }
+
+  .howto1-image {
+    width: 300px;
+  }
+
+  .howto2-image {
+    width: 240px;
   }
 
   .summary {
     color: var(--pale-brown);
+    font-size: var(--font-20px);
+    font-weight: 800;
+    text-align: center;
   }
 
 /*-------------------------------------------
