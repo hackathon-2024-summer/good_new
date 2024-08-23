@@ -1,0 +1,70 @@
+{%- extends "layout.html" %}
+
+{%- block css %}
+    <link rel="stylesheet" href="/static/css/howto.css">
+{% endblock %}
+
+{%- block content %}
+    <main>     
+      <section class="beige-color">
+        <div class="content-wrapper-930 howto-section">
+          <h2>アプリの使い方</h2>
+          <div class="howto">
+            <div>
+              <p class="number">1</p>
+              <p>平日14時に、Good ＆ Newを<br />質問するメッセージが届きます</p>
+              <img src="static/images/howto1.svg" alt="Good&Newを質問する" class="howto1-image">
+            </div>
+            <div>
+              <p class="number">2</p>
+              <p>質問されたユーザーは当日中に<br />回答します</p>
+              <img src="static/images/howto2.svg" alt="Good&Newを回答する" class="howto2-image">
+            </div>
+            <div>
+              <p class="number">3</p>
+              <p>平日16時に、回答された<br />Good ＆ Newが配信されます</p>
+              <img src="static/images/howto3.svg" alt="Good&Newを共有する" class="howto3-image">
+            </div>
+          </div>      
+          <p class="summary">配信されたGood ＆ Newに対して、スタンプやリプライでリアクションしましょう &#127881;</p>                              
+        </div>
+      </section>
+
+      <section>
+        <div class="content-wrapper-780 install-section">
+          <h2>アプリのインストール</h2>
+          <ol>
+            <li>Slackにログインしている状態で、ページ上部にある「Slackにアプリをインストールする」をクリックすると、「Add to Slack」というボタンが表示されるのでクリックします。</li>
+            <li>アプリのアクセス権限リクエストのページが表示されます。画面右上にあるプルダウンメニューからアプリをインストールしたいワークスペースを選択し、「許可する」をクリックします。</li>
+            <li>インストールが成功した場合、その旨のメッセージが表示されます。メッセージ内のリンクから、ワークスペースへ移動して下さい。</li>
+          </ol>
+        </div>
+      </section>
+
+      <section>
+        <div class="content-wrapper-780 detail-section">
+          <h2>アプリの各機能の詳細について</h2>
+          <ol>
+            <li>平日14時に、Good ＆ Newを質問するメッセージが届きます</li>
+            <ul>
+              <li>平日14時に、5名のユーザーに対してアプリBOTからのDMとして質問が送信されます。</li>
+              <li>対象となるユーザーは、対象ワークスペースに参加している全てのユーザーからランダムで選ばれます。</li>
+            </ul>
+            <li>質問されたユーザーは、当日中に回答します</li>
+            <ul>
+              <li>当日中にアプリBOTからのDM内にある「回答する」ボタンをクリックすると、回答の入力画面が表示されます。</li>
+              <li>画面に回答を入力し、「送信する」ボタンをクリックすると回答が送信されます。</li>
+              <li>回答受付が完了すると、「回答を受け付けました」というメッセージが届きます。</li>
+              <li>なんらかの理由で回答受付が失敗した場合、「回答の保存に失敗しました」というメッセージが届きます。この場合、お手数をおかけしますが、再度の回答をお願いいたします。</li>
+            </ul>
+            <li>平日16時に、回答されたGood ＆ Newの中から3名分が配信されます</li>
+            <ul>
+              <li>平日16時に、3名分の回答が雑談チャンネルにアプリBOTからのメッセージとして配信されます。メッセージには回答したユーザーへのメンションが含まれます。</li>
+              <li>対象となる回答は、対象ワークスペース内で5日以内に送信された回答のうち、まだ配信されていないものからランダムで選ばれます。</li>
+              <li>対象ワークスペースに「雑談」というチャンネルが存在しない場合は、初回配信時に自動でチャンネルが作成され、ワークスペース内のユーザーが招待されます。</li>
+            </ul>
+          </ol>
+        </div>
+      </section>
+    </main>
+{%- endblock %}

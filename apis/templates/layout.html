@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+  <head>
+    <meta charset="utf-8" />
+    <title>Good and New</title>
+    <meta name="description" content="Good & New をチャットツール上で簡単に実施できるアプリの紹介ページです。" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="static/images/favicon.ico" id="favicon">
+    <link rel="apple-touch-icon" sizes="180x180" href="static/images/apple-touch-icon-180x180.png">
+
+    <!-- Googleフォント -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&display=swap" rel="stylesheet">
+    
+    <!-- レイアウトCSS -->
+    <link rel="stylesheet" href="/static/css/layout.css"> 
+    
+    <!-- ページ別のCSS -->
+	  {%- block css %}{% endblock %}
+
+  </head>
+
+  <body>
+    <!-- ヘッダー -->
+    <header>
+      <div class="header content-wrapper-930">
+        <div>
+          <a href="{{ url_for('index') }}" class="logo">
+            <img src="static/images/good_new_icon_noBack.png" alt="アイコン" />
+            <p>Good and New</p>
+          </a>
+        </div>                    
+        <nav>
+          <ul>
+            <li><a href="{{ url_for('howto') }}">使い方</a></li>
+            <li><a href="{{ url_for('faq') }}">Q&A</a></li>
+            <li>
+              <a href="{{ url_for('install') }}" class="btn">Slackにアプリをインストールする</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+	  {%- block content %}{% endblock %}
+    
+  </body>
+
+</html>

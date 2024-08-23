@@ -1,0 +1,108 @@
+@charset "UTF-8";
+
+/*-------------------------------------------
+  共通レイアウト
+  -------------------------------------------*/
+  .content-wrapper-780 {
+    width: 100%;
+    max-width: 780px;
+  }
+
+  section {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  section h2 {
+    color: var(--brown);
+    font-size: var(--font-32px);
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+/*-------------------------------------------
+  アプリの使い方
+  -------------------------------------------*/
+  .howto-section {
+    margin: 5rem 0;
+  }
+  
+  .howto {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 3rem;
+  }
+
+  .howto p {
+    margin-bottom: 3rem;
+  }
+
+  .number {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--pale-brown);
+    color: var(--beige);
+    font-size: var(--font-24px);
+    font-weight: 800;
+    text-align: center;
+    line-height: 50px;
+  }
+
+  .howto1-image {
+    width: 260px;
+  }
+
+  .howto2-image {
+    width: 240px;
+  }
+
+  .howto3-image {
+    width: 260px;
+  }
+
+  .summary {
+    color: var(--pale-brown);
+    font-size: var(--font-20px);
+    font-weight: 800;
+    text-align: center;
+  }
+
+/*-------------------------------------------
+  アプリのインストール
+  -------------------------------------------*/
+  .install-section {
+    margin: 5rem 0;
+  }
+
+  .install-section ol li {
+    list-style: decimal;
+    margin-bottom: 1.5rem;
+  }
+
+/*-------------------------------------------
+  アプリの各機能の詳細について
+  -------------------------------------------*/
+  .detail-section {
+    margin: 5rem 0;
+  }
+
+  .detail-section ol li {
+    list-style: decimal inside;
+    font-size: var(--font-20px);
+    margin-bottom: 1rem;
+  }
+
+  .detail-section ul {
+    margin-bottom: 3rem;
+    margin-left: 3rem;
+  }
+
+  .detail-section ol ul li {
+    list-style: disc;
+    font-size: var(--font-16px);
+    margin-bottom: 0.5rem;
+  }

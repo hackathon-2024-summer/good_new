@@ -1,0 +1,146 @@
+@charset "UTF-8";
+
+/*-------------------------------------------
+	カスタムプロパティ
+  -------------------------------------------*/
+  :root {
+    --brown: #512916;
+    --pale-brown: #B9A68E;
+    --beige: #F9F5EF;
+    --orange: #FFD501;
+    --text-gray: #373737;
+
+    --font-16px: 1rem;
+    --font-20px: 1.25rem;
+    --font-24px: 1.5rem;
+    --font-32px: 2rem;
+    --font-36px: 2.25rem;
+  }
+
+/*-------------------------------------------
+	ベース部分
+  -------------------------------------------*/
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: 100%;
+  }
+  
+  body {
+    font-family: "M PLUS Rounded 1c", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    color: var(--text-gray);
+    padding-top: 76px;
+  }
+
+  main {
+    width: 100%;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  li {
+    list-style: none;
+  }
+  
+  a {
+    text-decoration: none;
+    color: var(--text-gray);
+  }
+
+  /* Googleフォント */
+  /* .m-plus-rounded-1c-medium {
+    font-family: "M PLUS Rounded 1c", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+  .m-plus-rounded-1c-extrabold {
+    font-family: "M PLUS Rounded 1c", sans-serif;
+    font-weight: 800;
+    font-style: normal;
+  } */
+
+/*-------------------------------------------
+  共通レイアウト
+  -------------------------------------------*/
+  .content-wrapper-930 {
+    width: 100%;
+    max-width: 930px;
+  }
+  
+  .beige-color {
+    background-color: var(--beige);
+  }
+
+/*-------------------------------------------
+  共通パーツ
+  -------------------------------------------*/
+  .btn {
+    background-color: var(--orange);
+    color: var(--brown);
+    border-radius: 12px;
+    font-size: var(--font-20px);
+    padding: 1rem 1.5rem;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    transition: background-color ls ease-out 200ms;
+}
+
+.btn:hover {
+    opacity: 0.7;
+}
+
+/*-------------------------------------------
+  ヘッダー
+  -------------------------------------------*/
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: var(--beige);
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 0;
+    width: 100%;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--pale-brown);
+    font-size: var(--font-24px);
+    font-weight: 800;
+  }
+
+  .logo img {
+    width: 60px;
+  }
+
+  .logo:hover {
+    opacity: 0.7;
+  }
+
+  .header ul {
+    display: flex;
+    gap: 24px;
+    font-size: var(--font-20px);
+  }
+  
+  .header li a:hover {
+    opacity: 0.7;
+  }
+
